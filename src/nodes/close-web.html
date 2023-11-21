@@ -1,18 +1,21 @@
-
 <script type="text/html" data-template-name="close-web">
 	<div class="form-row">
-		<label for="node-input-waitFor"><i class="fa fa-pause"></i> <span>Wait For</span></label>
-		<input type="text" id="node-input-waitFor" value="500">
+		<label for="node-input-waitFor"
+			><i class="fa fa-pause"></i> <span>Wait For</span></label
+		>
+		<input type="text" id="node-input-waitFor" value="500" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-input-name">
+		<label for="node-input-name"
+			><i class="fa fa-tag"></i> <span>Name</span></label
+		>
+		<input type="text" id="node-input-name" />
 	</div>
 </script>
 
 <script type="text/html" data-help-name="close-web">
-	<p>Close the web browser which is openned by the open-web node and finalize the selenium session.</p>		
+	<p>Close the web browser which is openned by the open-web node and finalize the selenium session.</p>
 	<h3>Inputs</h3>
 		<dl class="message-properties">
 			<dt>driver <span class="property-type"><a href="https://www.selenium.dev/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebDriver.html">WebDriver</a></span></dt>
@@ -35,10 +38,10 @@
 				</dl>
 			</li>
 		</ol>
-	
+
 	<h3>Details</h3>
 		<p> This node is used to close gracefully the browser and stop the selenium connection.</p>
-		<p>	
+		<p>
 			<ul>
 				<li><a>Wait For</a>: specify the time to wait before looking up. The <code>msg.waitFor</code> will override the <code>Wait For</code> field if set.</li>
 			</ul>
@@ -51,26 +54,26 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('close-web', {
-		category : 'wd2',
-		defaults : {
-			name : {
-				value : ""
-			}, 
-			waitFor : {
-				value : 500,
-				validate : RED.validators.number()
-			}
+	RED.nodes.registerType("close-web", {
+		category: "wd2",
+		defaults: {
+			name: {
+				value: "",
+			},
+			waitFor: {
+				value: 500,
+				validate: RED.validators.number(),
+			},
 		},
-		color : "#47B6EE",
-		inputs : 1,
-		outputs : 1,
-		icon : "font-awesome/fa-window-close-o",
-		label : function() {
+		color: "#47B6EE",
+		inputs: 1,
+		outputs: 1,
+		icon: "font-awesome/fa-window-close-o",
+		label: function () {
 			return this.name || "Close";
 		},
-		labelStyle : function() {
+		labelStyle: function () {
 			return this.name ? "node_label_italic" : "";
-		}
-	}); 
+		},
+	});
 </script>

@@ -2,13 +2,13 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.4
 
@@ -40,23 +40,22 @@ jobs:
 
       - name: Install node-red
         run: sudo npm install -g --unsafe-perm node-red
-          
-      - name: Install package into node-red 
+
+      - name: Install package into node-red
         run: sudo npm install -g .
 
       # Runs a single command using the runners shell
       - name: Run node-red
-        run: node-red > node-red-log.txt 2>&1 & 
-  
+        run: node-red > node-red-log.txt 2>&1 &
+
       # Runs a single command using the runners shell
       - name: Run chromedriver
-        run: chromedriver --verbose > chromedriver-log.txt 2>&1 & 
+        run: chromedriver --verbose > chromedriver-log.txt 2>&1 &
 
       - name: Wait on
         uses: iFaxity/wait-on-action@v1
         with:
-          http-get: http://localhost:1880  
-          
+          http-get: http://localhost:1880
+
       - name: Echo log
         run: cat node-red-log.txt
-      

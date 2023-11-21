@@ -1,11 +1,15 @@
 <script type="text/html" data-template-name="get-value">
 	<div class="form-row">
-		<label for="node-input-expected"><i class="fa fa-check"></i> <span>Expected</span></label>
-		<input type="text" id="node-input-expected">
+		<label for="node-input-expected"
+			><i class="fa fa-check"></i> <span>Expected</span></label
+		>
+		<input type="text" id="node-input-expected" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-selector"><i class="fa fa-bars"></i> <span>By</span></label>
+		<label for="node-input-selector"
+			><i class="fa fa-bars"></i> <span>By</span></label
+		>
 		<select id="node-input-selector" style="width:125px !important">
 			<option value=""></option>
 			<option value="id">id</option>
@@ -19,28 +23,36 @@
 		</select>
 	</div>
 	<div class="form-row" id="row-input-target">
-		<label for="node-input-target"><i class="fa fa-dot-circle-o"></i> <span>Target</span></label>
-		<input type="text" id="node-input-target">
+		<label for="node-input-target"
+			><i class="fa fa-dot-circle-o"></i> <span>Target</span></label
+		>
+		<input type="text" id="node-input-target" />
 	</div>
 	<div class="form-row" id="row-input-timeout">
-		<label for="node-input-timeout"><i class="fa fa-clock-o"></i> <span>Timeout</span></label>
-		<input type="text" id="node-input-timeout" value="1000">
+		<label for="node-input-timeout"
+			><i class="fa fa-clock-o"></i> <span>Timeout</span></label
+		>
+		<input type="text" id="node-input-timeout" value="1000" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-waitFor"><i class="fa fa-pause"></i> <span>Wait For</span></label>
-		<input type="text" id="node-input-waitFor" value="500">
+		<label for="node-input-waitFor"
+			><i class="fa fa-pause"></i> <span>Wait For</span></label
+		>
+		<input type="text" id="node-input-waitFor" value="500" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-input-name">
+		<label for="node-input-name"
+			><i class="fa fa-tag"></i> <span>Name</span></label
+		>
+		<input type="text" id="node-input-name" />
 	</div>
 </script>
 
 <script type="text/html" data-help-name="get-value">
 	<p>Get the value from <code>value</code> attribute of the <code>msg.element</code> or after waiting for the expected element is located.</p>
-	
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 		<dt>driver <span class="property-type"><a href="https://www.selenium.dev/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebDriver.html">WebDriver</a></span></dt>
@@ -121,56 +133,55 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('get-value', {
-		category : 'wd2',
-		defaults : {
-			name : {
-				value : ""
+	RED.nodes.registerType("get-value", {
+		category: "wd2",
+		defaults: {
+			name: {
+				value: "",
 			},
-			expected : {
-				value : ""
+			expected: {
+				value: "",
 			},
-			selector : {
-				value : ""
+			selector: {
+				value: "",
 			},
-			target : {
-				value : ""
+			target: {
+				value: "",
 			},
-			timeout : {
-				value : 1000,
-				validate : RED.validators.number()
+			timeout: {
+				value: 1000,
+				validate: RED.validators.number(),
 			},
-			waitFor : {
-				value : 500,
-				validate : RED.validators.number()
+			waitFor: {
+				value: 500,
+				validate: RED.validators.number(),
 			},
-			savetofile : {
-				value : false
-			}
+			savetofile: {
+				value: false,
+			},
 		},
-		color : "#47B6EE",
-		inputs : 1,
-		outputs : 2,
+		color: "#47B6EE",
+		inputs: 1,
+		outputs: 2,
 		outputLabels: ["success", "failure"],
-		icon : "font-awesome/fa-file-text-o",
-		label : function() {
+		icon: "font-awesome/fa-file-text-o",
+		label: function () {
 			return this.name || "Get Value";
 		},
-		labelStyle : function() {
+		labelStyle: function () {
 			return this.name ? "node_label_italic" : "";
 		},
-		oneditprepare : function() {
+		oneditprepare: function () {
 			let node = this;
 			$("#node-input-selector").on("change", (event) => {
 				if ($("#node-input-selector").val() === "") {
 					$("#row-input-target").hide();
 					$("#row-input-timeout").hide();
-				}
-				else {
+				} else {
 					$("#row-input-target").show();
 					$("#row-input-timeout").show();
 				}
 			});
-		}
-	}); 
+		},
+	});
 </script>

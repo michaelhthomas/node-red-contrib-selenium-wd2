@@ -1,15 +1,23 @@
 <script type="text/html" data-template-name="run-script">
 	<div class="form-row" style="margin-bottom: 0px;">
-		<label for="node-input-script"><i class="fa fa-wrench"></i> <span>Function</span></label>
-		<input type="hidden" id="node-input-script" autofocus="autofocus">
-		<input type="hidden" id="node-input-noerr">
+		<label for="node-input-script"
+			><i class="fa fa-wrench"></i> <span>Function</span></label
+		>
+		<input type="hidden" id="node-input-script" autofocus="autofocus" />
+		<input type="hidden" id="node-input-noerr" />
 	</div>
 	<div class="form-row node-text-editor-row">
-		<div style="height: 250px;" class="node-text-editor" id="node-input-script-editor" ></div>
+		<div
+			style="height: 250px;"
+			class="node-text-editor"
+			id="node-input-script-editor"
+		></div>
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-selector"><i class="fa fa-bars"></i> <span>By</span></label>
+		<label for="node-input-selector"
+			><i class="fa fa-bars"></i> <span>By</span></label
+		>
 		<select id="node-input-selector" style="width:125px !important">
 			<option value=""></option>
 			<option value="id">id</option>
@@ -23,28 +31,36 @@
 		</select>
 	</div>
 	<div class="form-row" id="row-input-target">
-		<label for="node-input-target"><i class="fa fa-dot-circle-o"></i> <span>Target</span></label>
-		<input type="text" id="node-input-target">
+		<label for="node-input-target"
+			><i class="fa fa-dot-circle-o"></i> <span>Target</span></label
+		>
+		<input type="text" id="node-input-target" />
 	</div>
 	<div class="form-row" id="row-input-timeout">
-		<label for="node-input-timeout"><i class="fa fa-clock-o"></i> <span>Timeout</span></label>
-		<input type="text" id="node-input-timeout" value="1000">
+		<label for="node-input-timeout"
+			><i class="fa fa-clock-o"></i> <span>Timeout</span></label
+		>
+		<input type="text" id="node-input-timeout" value="1000" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-waitFor"><i class="fa fa-pause"></i> <span>Wait For</span></label>
-		<input type="text" id="node-input-waitFor" value="00">
+		<label for="node-input-waitFor"
+			><i class="fa fa-pause"></i> <span>Wait For</span></label
+		>
+		<input type="text" id="node-input-waitFor" value="00" />
 	</div>
-	<hr align="middle">
+	<hr align="middle" />
 	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-input-name">
+		<label for="node-input-name"
+			><i class="fa fa-tag"></i> <span>Name</span></label
+		>
+		<input type="text" id="node-input-name" />
 	</div>
 </script>
 
 <script type="text/html" data-help-name="run-script">
 	<p>A function block where you can write code to run in the browser context of an existing element.</p>
-		
+
 	<h3>Inputs</h3>
 		<dt>driver <span class="property-type"><a href="https://www.selenium.dev/selenium/docs/api/javascript/module/selenium-webdriver/lib/webdriver_exports_WebDriver.html">WebDriver</a></span></dt>
 		<dd>the WebDriver object required to execute Selenium actions.</dd>
@@ -113,50 +129,49 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('run-script', {
-		category : 'wd2',
-		defaults : {
-			name : {
-				value : ""
+	RED.nodes.registerType("run-script", {
+		category: "wd2",
+		defaults: {
+			name: {
+				value: "",
 			},
-			script : {
-				value : "console.log(arguments[0].innerHTML);"
+			script: {
+				value: "console.log(arguments[0].innerHTML);",
 			},
-			selector : {
-				value : ""
+			selector: {
+				value: "",
 			},
-			target : {
-				value : ""
+			target: {
+				value: "",
 			},
-			timeout : {
-				value : 1000,
-				validate : RED.validators.number()
+			timeout: {
+				value: 1000,
+				validate: RED.validators.number(),
 			},
-			waitfor : {
-				value : 500,
-				validate : RED.validators.number()
-			}
+			waitfor: {
+				value: 500,
+				validate: RED.validators.number(),
+			},
 		},
-		color : "#47B6EE",
-		inputs : 1,
-		outputs : 2,
+		color: "#47B6EE",
+		inputs: 1,
+		outputs: 2,
 		outputLabels: ["success", "failure"],
-		icon : "debug.png",
-		label : function() {
+		icon: "debug.png",
+		label: function () {
 			return this.name || "Run Script";
 		},
-		labelStyle : function() {
+		labelStyle: function () {
 			return this.name ? "node_label_italic" : "";
 		},
-		oneditprepare : function() {
+		oneditprepare: function () {
 			var that = this;
-			
+
 			$("#node-input-selector").on("change", (event) => {
 				if ($("#node-input-selector").val() === "") {
 					$("#row-input-target").hide();
 					$("#row-input-timeout").hide();
-				}
-				else {
+				} else {
 					$("#row-input-target").show();
 					$("#row-input-timeout").show();
 				}
@@ -169,34 +184,35 @@
 					height -= $(rows[i]).outerHeight(true);
 				}
 				var editorRow = $("#dialog-form>div.node-text-editor-row");
-				height -= (parseInt(editorRow.css("marginTop")) + parseInt(editorRow.css("marginBottom")));
+				height -=
+					parseInt(editorRow.css("marginTop")) +
+					parseInt(editorRow.css("marginBottom"));
 				$(".node-text-editor").css("height", height + "px");
 				that.editor.resize();
 			}
 
-
 			$("#dialog").on("dialogresize", functionDialogResize);
-			$("#dialog").one("dialogopen", function(ev) {
-				var size = $("#dialog").dialog('option', 'sizeCache-function');
+			$("#dialog").one("dialogopen", function (ev) {
+				var size = $("#dialog").dialog("option", "sizeCache-function");
 				if (size) {
-					$("#dialog").dialog('option', 'width', size.width);
-					$("#dialog").dialog('option', 'height', size.height);
+					$("#dialog").dialog("option", "width", size.width);
+					$("#dialog").dialog("option", "height", size.height);
 					functionDialogResize();
 				}
 			});
-			$("#dialog").one("dialogclose", function(ev, ui) {
-				var height = $("#dialog").dialog('option', 'height');
+			$("#dialog").one("dialogclose", function (ev, ui) {
+				var height = $("#dialog").dialog("option", "height");
 				$("#dialog").off("dialogresize", functionDialogResize);
 			});
 
 			this.editor = RED.editor.createEditor({
-				id : 'node-input-script-editor',
-				mode : 'ace/mode/javascript',
-				value : $("#node-input-script").val()
+				id: "node-input-script-editor",
+				mode: "ace/mode/javascript",
+				value: $("#node-input-script").val(),
 			});
 			this.editor.focus();
 		},
-		oneditsave : function() {
+		oneditsave: function () {
 			var annot = this.editor.getSession().getAnnotations();
 			this.noerr = 0;
 			$("#node-input-noerr").val(0);
@@ -209,6 +225,6 @@
 			}
 			$("#node-input-script").val(this.editor.getValue());
 			delete this.editor;
-		}
-	}); 
+		},
+	});
 </script>

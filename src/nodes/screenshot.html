@@ -1,16 +1,22 @@
 <script type="text/html" data-template-name="screenshot">
 	<div class="form-row">
-		<label for="node-input-filePath"><i class="fa fa-globe"></i> <span>Filename</span></label>
-		<input type="text" id="node-input-filePath">
+		<label for="node-input-filePath"
+			><i class="fa fa-globe"></i> <span>Filename</span></label
+		>
+		<input type="text" id="node-input-filePath" />
 	</div>
-    <div class="form-row">
-		<label for="node-input-waitFor"><i class="fa fa-pause"></i> <span>Wait For</span></label>
-		<input type="text" id="node-input-waitFor" value="00">
-	</div>
-	<hr align="middle">
 	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-input-name">
+		<label for="node-input-waitFor"
+			><i class="fa fa-pause"></i> <span>Wait For</span></label
+		>
+		<input type="text" id="node-input-waitFor" value="00" />
+	</div>
+	<hr align="middle" />
+	<div class="form-row">
+		<label for="node-input-name"
+			><i class="fa fa-tag"></i> <span>Name</span></label
+		>
+		<input type="text" id="node-input-name" />
 	</div>
 </script>
 
@@ -44,10 +50,10 @@
 				</dl>
 			</li>
 		</ol>
-	
+
 	<h3>Details</h3>
 		<p> This node is used to navigate accordingly to specified options.</p>
-		<p>	
+		<p>
 			<ul>
 				<li><a>File path</a>: (if set) specify the file path which will be used to write the file. If folder doesn't exist, the node will fail. The <code>msg.filePath</code> will override the <code>File Path</code> field if set.</li>
 				<li><a>Wait For</a>: specify the time to wait before looking up. The <code>msg.waitFor</code> will override the <code>Wait For</code> field if set.</li>
@@ -61,30 +67,30 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('screenshot', {
-		category : 'wd2',
-		defaults : {
-			name : {
-				value : ""
+	RED.nodes.registerType("screenshot", {
+		category: "wd2",
+		defaults: {
+			name: {
+				value: "",
 			},
-			filePath :  {
-				value : ""
+			filePath: {
+				value: "",
 			},
-			waitFor : {
-				value : 500,
-				validate : RED.validators.number()
-			}
+			waitFor: {
+				value: 500,
+				validate: RED.validators.number(),
+			},
 		},
-		color : "#47B6EE",
-		inputs : 1,
-		outputs : 2,
+		color: "#47B6EE",
+		inputs: 1,
+		outputs: 2,
 		outputLabels: ["success", "failure"],
-		icon : "font-awesome/fa-camera",
-		label : function() {
+		icon: "font-awesome/fa-camera",
+		label: function () {
 			return this.name || "Screenshot";
 		},
-		labelStyle : function() {
+		labelStyle: function () {
 			return this.name ? "node_label_italic" : "";
-		}
-	}); 
+		},
+	});
 </script>
