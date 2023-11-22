@@ -1,15 +1,18 @@
 import { Socket } from "net";
 
-function getValueFromPropertyNameRec(obj: any, listProp: string[]) {
+type RecursiveObj = { [key: string]: RecursiveObj } | string | undefined;
+
+function getValueFromPropertyNameRec(obj: RecursiveObj, listProp: string[]) {
 	let res = obj;
 	for (const prop of listProp) {
+		if (typeof res !== "object" || !(prop in res)) break;
 		res = res[prop];
 		if (!res) break;
 	}
 	return res;
 }
 
-export function replaceVar(str: string, msg: any) {
+export function replaceVar(str: string, msg: RecursiveObj) {
 	if (typeof str !== "string") return str;
 	if (str.match(/^\{\{.*\}\}$/g)) {
 		// if the string is in double brackets like {{ foo }}
@@ -19,10 +22,8 @@ export function replaceVar(str: string, msg: any) {
 		switch (v[0]) {
 			case "msg":
 				return getValueFromPropertyNameRec(msg, v.splice(1, v.length));
-				break;
 			default:
 				return str;
-				break;
 		}
 	} else {
 		return str;
@@ -30,7 +31,7 @@ export function replaceVar(str: string, msg: any) {
 }
 
 export async function portCheck(host: string, port: number): Promise<boolean> {
-	return new Promise<boolean>((resolve, reject) => {
+	return new Promise<boolean>((resolve) => {
 		const socket = new Socket();
 		let status: boolean = false;
 		// Socket connection established, port is open
@@ -43,12 +44,16 @@ export async function portCheck(host: string, port: number): Promise<boolean> {
 			socket.destroy();
 			resolve(status);
 		});
-		socket.on("error", (exception) => {
+		socket.on("error", () => {
 			resolve(status);
 		});
-		socket.on("close", (exception) => {
+		socket.on("close", () => {
 			resolve(status);
 		});
 		socket.connect(port, host);
 	});
+}
+
+export function isError(x: unknown): x is Error {
+	return x != null && typeof x === "object" && x instanceof Error;
 }
