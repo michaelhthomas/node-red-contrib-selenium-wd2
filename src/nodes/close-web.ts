@@ -1,5 +1,5 @@
 import { NodeMessageInFlow } from "node-red";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
 import { toError } from "../utils";
 
@@ -11,7 +11,7 @@ export function NodeCloseWebConstructor(
 	this: NodeCloseWeb,
 	conf: NodeCloseWebDef
 ) {
-	WD2Manager.RED.nodes.createNode(this, conf);
+	WDManager.RED.nodes.createNode(this, conf);
 	this.status({});
 
 	this.on("input", (msg: NodeMessageInFlow, send, done) => {

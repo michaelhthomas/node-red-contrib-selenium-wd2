@@ -1,5 +1,5 @@
 import { Node, NodeMessageInFlow } from "node-red";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import {
 	SeleniumAction,
 	SeleniumNodeDef,
@@ -25,7 +25,7 @@ export function GenericSeleniumConstructor<
 	nodeCreation: () => void = null
 ) {
 	return function (this: TNode, conf: TNodeDef): void {
-		WD2Manager.RED.nodes.createNode(this, conf);
+		WDManager.RED.nodes.createNode(this, conf);
 
 		this.status({});
 		this.on("input", async (msg: NodeMessageInFlow, send, done) => {
@@ -56,7 +56,7 @@ export function GenericSeleniumConstructor<
 								}
 							},
 							error: (err) => {
-								if (isError(err) && WD2Manager.checkIfCritical(err)) {
+								if (isError(err) && WDManager.checkIfCritical(err)) {
 									this.status({
 										fill: "red",
 										shape: "dot",

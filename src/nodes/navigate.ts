@@ -1,4 +1,4 @@
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
 import { NodeMessageInFlow } from "node-red";
 import { isError } from "../utils";
@@ -14,7 +14,7 @@ export function NodeNavigateConstructor(
 	this: NodeNavigate,
 	conf: NodeNavigateDef
 ) {
-	WD2Manager.RED.nodes.createNode(this, conf);
+	WDManager.RED.nodes.createNode(this, conf);
 	this.status({});
 
 	this.on("input", (msg: NodeMessageInFlow, send, done) => {
@@ -51,7 +51,7 @@ export function NodeNavigateConstructor(
 					this.status({ fill: "green", shape: "dot", text: "success" });
 					done();
 				} catch (e) {
-					if (isError(e) && WD2Manager.checkIfCritical(e)) {
+					if (isError(e) && WDManager.checkIfCritical(e)) {
 						this.status({ fill: "red", shape: "dot", text: "critical error" });
 						done(e);
 					} else {

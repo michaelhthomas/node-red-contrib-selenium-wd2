@@ -1,5 +1,5 @@
 import { isError } from "../utils";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import { SeleniumAction, SeleniumNode, SeleniumNodeDef } from "./node";
 import { GenericSeleniumConstructor } from "./node-constructor";
 
@@ -29,7 +29,7 @@ async function inputAction(
 			action.send([msg, null]);
 			action.done();
 		} catch (err) {
-			if (isError(err) && WD2Manager.checkIfCritical(err)) {
+			if (isError(err) && WDManager.checkIfCritical(err)) {
 				reject(err);
 			} else {
 				const errorMessage =

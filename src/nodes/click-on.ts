@@ -1,5 +1,5 @@
 import { NodeMessage } from "node-red";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import {
 	SeleniumAction,
 	SeleniumMsg,
@@ -34,7 +34,7 @@ async function inputPreCondAction(
 			action.send([msg, null]);
 			action.done();
 		} catch (err) {
-			if (!isError(err) || WD2Manager.checkIfCritical(err)) {
+			if (!isError(err) || WDManager.checkIfCritical(err)) {
 				throw err;
 			} else {
 				msg.error = {
@@ -74,7 +74,7 @@ async function inputAction(
 			action.send([msg, null]);
 			action.done();
 		} catch (err) {
-			if (!isError(err) || WD2Manager.checkIfCritical(err)) {
+			if (!isError(err) || WDManager.checkIfCritical(err)) {
 				throw err;
 			} else {
 				msg.error = {
@@ -104,11 +104,11 @@ const NodeClickOnConstructor = GenericSeleniumConstructor(
 export { NodeClickOnConstructor };
 
 export function NodeClickPrerequisite() {
-	WD2Manager.RED.httpAdmin.post(
+	WDManager.RED.httpAdmin.post(
 		"/onclick/:id",
-		WD2Manager.RED.auth.needsPermission("inject.write"),
+		WDManager.RED.auth.needsPermission("inject.write"),
 		(req, res) => {
-			const node = WD2Manager.RED.nodes.getNode(req.params.id);
+			const node = WDManager.RED.nodes.getNode(req.params.id);
 			if (node != null) {
 				try {
 					node.receive({ click: true } as NodeMessage);
@@ -117,7 +117,7 @@ export function NodeClickPrerequisite() {
 					res.sendStatus(500);
 					if (isError(err))
 						node.error(
-							WD2Manager.RED._("inject.failed", {
+							WDManager.RED._("inject.failed", {
 								error: err.toString(),
 							})
 						);

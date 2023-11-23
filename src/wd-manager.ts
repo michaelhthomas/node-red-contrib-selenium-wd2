@@ -5,26 +5,26 @@ import * as firefox from "selenium-webdriver/firefox";
 import { NodeOpenWebDef } from "./nodes/node";
 import { portCheck } from "./utils";
 
-export class WD2Manager {
+export class WDManager {
 	private static _RED: NodeAPI<NodeAPISettingsWithData>;
 	private static _serverURL: string = "";
 	private static _driverList: WebDriver[] = new Array<WebDriver>();
 
 	public static get RED() {
-		return WD2Manager._RED;
+		return WDManager._RED;
 	}
 
 	public static init(RED: NodeAPI<NodeAPISettingsWithData>): void {
-		WD2Manager._RED = RED;
+		WDManager._RED = RED;
 	}
 
 	/**
-	 * Define the configuration of the Selenium Server and return a boolean if the server is reacheable
+	 * Define the configuration of the Selenium Server and return a boolean if the server is reachable
 	 * @param serverURL
 	 * @param browser
 	 */
 	public static async setServerConfig(serverURL: string): Promise<boolean> {
-		WD2Manager._serverURL = serverURL;
+		WDManager._serverURL = serverURL;
 		const server = serverURL.match(/\/\/([a-z0-9A-Z.:-]*)/)?.[1];
 		if (!server) return new Promise((resolve) => resolve(false));
 		const host = server.split(":")[0];
@@ -45,14 +45,14 @@ export class WD2Manager {
 					builder = builder.setChromeOptions(new chrome.Options().headless());
 					break;
 				default:
-					WD2Manager._RED.log.warn(
+					WDManager._RED.log.warn(
 						"unsupported headless configuration for" + conf.browser
 					);
 					break;
 			}
 		}
 		const driver = builder.build();
-		WD2Manager._driverList.push(driver);
+		WDManager._driverList.push(driver);
 
 		return driver;
 	}

@@ -1,5 +1,5 @@
 import { NodeMessageInFlow } from "node-red";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
 import * as fs from "fs/promises";
 import { isError } from "../utils";
@@ -14,7 +14,7 @@ export function NodeScreenshotConstructor(
 	this: NodeScreenshot,
 	conf: NodeScreenshotDef
 ) {
-	WD2Manager.RED.nodes.createNode(this, conf);
+	WDManager.RED.nodes.createNode(this, conf);
 	this.status({});
 
 	this.on("input", (msg: NodeMessageInFlow, send, done) => {
@@ -39,7 +39,7 @@ export function NodeScreenshotConstructor(
 					this.status({ fill: "green", shape: "dot", text: "success" });
 					done();
 				} catch (e) {
-					if (isError(e) && WD2Manager.checkIfCritical(e)) {
+					if (isError(e) && WDManager.checkIfCritical(e)) {
 						this.status({ fill: "red", shape: "dot", text: "critical error" });
 						done(e);
 					} else {

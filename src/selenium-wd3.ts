@@ -16,10 +16,10 @@ import {
 	NodeSetAttributeConstructor,
 	NodeSetValueConstructor,
 } from "./nodes/node";
-import { WD2Manager } from "./wd2-manager";
+import { WDManager } from "./wd-manager";
 
 export default (RED: NodeAPI<NodeAPISettingsWithData>) => {
-	WD2Manager.init(RED);
+	WDManager.init(RED);
 	RED.nodes.registerType("open-web", NodeOpenWebConstructor);
 	RED.nodes.registerType("close-web", NodeCloseWebConstructor);
 	NodeClickPrerequisite();

@@ -1,7 +1,33 @@
 {
-	"name": "node-red-contrib-selenium-wd2",
+	"name": "node-red-contrib-selenium-wd3",
 	"version": "0.1.6",
-	"description": "Selenium-webdriver nodes for Node-RED based on node-red-contrib-selenium-webdriver",
+	"description": "Selenium WebDriver nodes for Node-RED based on node-red-contrib-selenium-wd2.",
+	"author": {
+		"name": "Michael Thomas"
+	},
+	"license": "Apache-2.0",
+	"keywords": [
+		"node-red",
+		"selenium"
+	],
+	"node-red": {
+		"nodes": {
+			"selenium-wd3": "dist/selenium-wd3.js"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/michaelhthomas/node-red-contrib-selenium-wd3"
+	},
+	"scripts": {
+		"lint": "eslint ./src/",
+		"type-check": "tsc --noEmit",
+		"format:check": "prettier --check .",
+		"format:write": "prettier --write .",
+		"check": "run-s lint type-check format:check",
+		"prepublishOnly": "mkdir dist && cp -r src/icons dist/icons && cat src/nodes/*.html > dist/selenium-wd3.html && tsc",
+		"clean": "rm -rf dist"
+	},
 	"dependencies": {
 		"rxjs": "~6.6.3",
 		"selenium-webdriver": "4.0.0-alpha.7"
@@ -21,33 +47,7 @@
 		"tslint-config-prettier": "~1.18.0",
 		"typescript": "~5.2.2"
 	},
-	"license": "Apache-2.0",
-	"keywords": [
-		"node-red",
-		"selenium-wd2"
-	],
-	"node-red": {
-		"nodes": {
-			"selenium-wd2": "dist/selenium-wd2.js"
-		}
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/simonradier/node-red-contrib-selenium-wd2"
-	},
 	"engines": {
 		"node": ">= 14.0.0"
-	},
-	"scripts": {
-		"lint": "eslint ./src/",
-		"type-check": "tsc --noEmit",
-		"format:check": "prettier --check .",
-		"format:write": "prettier --write .",
-		"check": "run-s lint type-check format:check",
-		"prepublishOnly": "mkdir dist && cp -r src/icons dist/icons && cat src/nodes/*.html > dist/selenium-wd2.html && tsc",
-		"clean": "rm -rf dist"
-	},
-	"author": {
-		"name": "Simon Radier"
 	}
 }

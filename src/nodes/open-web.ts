@@ -1,5 +1,5 @@
 import { NodeMessageInFlow } from "node-red";
-import { WD2Manager } from "../wd2-manager";
+import { WDManager } from "../wd-manager";
 import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
 import { toError } from "../utils";
 
@@ -20,13 +20,13 @@ export function NodeOpenWebConstructor(
 	this: NodeOpenWeb,
 	conf: NodeOpenWebDef
 ) {
-	WD2Manager.RED.nodes.createNode(this, conf);
+	WDManager.RED.nodes.createNode(this, conf);
 
 	if (!conf.serverURL) {
 		this.log("Selenium server URL is undefined");
 		this.status({ fill: "red", shape: "ring", text: "no server defined" });
 	} else {
-		WD2Manager.setServerConfig(conf.serverURL)
+		WDManager.setServerConfig(conf.serverURL)
 			.then((result) => {
 				if (result) {
 					this.log(conf.serverURL + " is reachable by Node-RED");
@@ -52,7 +52,7 @@ export function NodeOpenWebConstructor(
 		assertIsSeleniumMessage(msg);
 
 		let driverError = false;
-		msg.driver = WD2Manager.getDriver(conf);
+		msg.driver = WDManager.getDriver(conf);
 		this.status({ fill: "blue", shape: "ring", text: "opening browser" });
 		try {
 			await msg.driver.get(conf.webURL);
