@@ -49,7 +49,7 @@ export function NodeGetTitleConstructor(
 						} else {
 							try {
 								msg.payload = await msg.driver.getTitle();
-							} catch (sube) {
+							} catch {
 								msg.payload = "[Unknown]";
 							}
 							const error = {
