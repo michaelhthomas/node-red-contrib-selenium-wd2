@@ -1,6 +1,6 @@
 import { NodeMessageInFlow } from "node-red";
 import { WDManager } from "../wd-manager";
-import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
+import { SeleniumMsg, SeleniumNode, SeleniumNodeDef } from "./node";
 import { toError } from "../utils";
 
 export interface NodeOpenWebDef extends SeleniumNodeDef {
@@ -48,11 +48,12 @@ export function NodeOpenWebConstructor(
 				this.log(error);
 			});
 	}
-	this.on("input", async (msg: NodeMessageInFlow, send, done) => {
-		assertIsSeleniumMessage(msg);
-
+	this.on("input", async (message: NodeMessageInFlow, send, done) => {
 		let driverError = false;
-		msg.driver = WDManager.getDriver(conf);
+		const msg: SeleniumMsg = {
+			...message,
+			driver: WDManager.getDriver(conf),
+		};
 		this.status({ fill: "blue", shape: "ring", text: "opening browser" });
 		try {
 			await msg.driver.get(conf.webURL);
