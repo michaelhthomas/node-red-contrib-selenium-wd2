@@ -16,6 +16,7 @@
 		"eslint": "^8.54.0",
 		"eslint-plugin-jsdoc": "^46.9.0",
 		"eslint-plugin-prefer-arrow": "^1.2.3",
+		"npm-run-all": "^4.1.5",
 		"prettier": "~2.1.2",
 		"tslint-config-prettier": "~1.18.0",
 		"typescript": "~5.2.2"
@@ -38,8 +39,11 @@
 		"node": ">= 14.0.0"
 	},
 	"scripts": {
-		"lint": "eslint ./src/ && prettier --check .",
-		"format": "prettier --write .",
+		"lint": "eslint ./src/",
+		"type-check": "tsc --noEmit",
+		"format:check": "prettier --check .",
+		"format:write": "prettier --write .",
+		"check": "run-s lint type-check format:check",
 		"prepublishOnly": "mkdir dist && cp -r src/icons dist/icons && cat src/nodes/*.html > dist/selenium-wd2.html && tsc",
 		"clean": "rm -rf dist"
 	},
