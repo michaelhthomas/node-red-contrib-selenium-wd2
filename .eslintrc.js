@@ -11,5 +11,11 @@ module.exports = {
 		"jsdoc/check-alignment": "error",
 		"jsdoc/check-indentation": "error",
 		"jsdoc/tag-lines": "error",
+		"@typescript-eslint/no-misused-promises": [
+			"error",
+			{
+				checksVoidReturn: false,
+			},
+		],
 	},
 };

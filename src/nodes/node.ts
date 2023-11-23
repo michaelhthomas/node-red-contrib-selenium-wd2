@@ -2,6 +2,8 @@ import { NodeMessageInFlow } from "node-red__registry";
 import { Node, NodeDef, NodeMessage } from "node-red";
 import { Observable } from "rxjs";
 import { By, until, WebDriver, WebElement } from "selenium-webdriver";
+import { isError } from "../utils";
+import { ElementSelectorError } from "../errors";
 
 export * from "./open-web";
 export * from "./close-web";
@@ -17,15 +19,17 @@ export * from "./run-script";
 export * from "./screenshot";
 export * from "./set-attribute";
 
+export type BySelector = Exclude<keyof typeof By, "prototype">;
+
 export interface SeleniumNodeDef extends NodeDef {
-	selector: string;
+	selector: BySelector | "";
 	target: string;
 	// Node-red only push string from properties if modified by user
 	timeout: string;
 	waitFor: string;
 }
 
-export interface SeleniumNode extends Node<any> {}
+export interface SeleniumNode extends Node {}
 
 export interface SeleniumAction {
 	done: (err?: Error) => void;
@@ -35,12 +39,12 @@ export interface SeleniumAction {
 
 export interface SeleniumMsg extends NodeMessageInFlow {
 	driver: WebDriver | null;
-	selector?: string;
+	selector?: BySelector;
 	// Node-red only push string from properties if modified by user
 	target?: string;
 	timeout?: string;
 	waitFor?: string;
-	error?: any;
+	error?: unknown;
 	element?: WebElement;
 	webTitle?: string;
 	click?: boolean;
@@ -53,6 +57,15 @@ export interface SeleniumMsg extends NodeMessageInFlow {
 	url?: string;
 	navType?: string;
 	filePath?: string;
+}
+
+export function assertIsSeleniumMessage(
+	msg: NodeMessageInFlow
+): asserts msg is SeleniumMsg {
+	if (!("driver" in msg))
+		throw new Error(
+			"Can't use this node without a working open-web node first"
+		);
 }
 
 /**
@@ -69,14 +82,13 @@ export function waitForElement(
 		const waitFor: number = parseInt(msg.waitFor ?? conf.waitFor, 10);
 		const timeout: number = parseInt(msg.timeout ?? conf.timeout, 10);
 		const target: string = msg.target ?? conf.target;
-		const selector: string = msg.selector ?? conf.selector;
+		const selector: BySelector | "" = msg.selector ?? conf.selector;
 		let element: WebElement;
 		subscriber.next("waiting for " + (waitFor / 1000).toFixed(1) + " s");
 		setTimeout(async () => {
 			try {
 				subscriber.next("locating");
 				if (selector !== "") {
-					// @ts-ignore
 					element = await msg.driver.wait(
 						until.elementLocated(By[selector](target)),
 						timeout
@@ -89,19 +101,32 @@ export function waitForElement(
 				subscriber.next(element);
 				subscriber.complete();
 			} catch (e) {
-				let error: any;
-				if (e.toString().includes("TimeoutError"))
-					error = new Error(
-						"catch timeout after " +
+				let error: ElementSelectorError;
+				if (isError(e) && e.toString().includes("TimeoutError"))
+					error = new ElementSelectorError({
+						message:
+							"catch timeout after " +
 							timeout +
 							" milliseconds for selector type " +
 							selector +
 							" for  " +
-							target
-					);
-				else error = e;
-				error.selector = selector;
-				error.target = target;
+							target,
+						selector,
+						target,
+					});
+				else if (isError(e))
+					error = new ElementSelectorError({
+						message: e.message,
+						selector,
+						target,
+					});
+				else
+					error = new ElementSelectorError({
+						message: "an unknown error occurred: " + String(e),
+						selector,
+						target,
+					});
+
 				subscriber.error(error);
 			}
 		}, waitFor);

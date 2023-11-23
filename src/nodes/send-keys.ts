@@ -1,4 +1,4 @@
-import { Node } from "node-red";
+import { isError } from "../utils";
 import { WD2Manager } from "../wd2-manager";
 import {
 	SeleniumAction,
@@ -42,11 +42,13 @@ async function inputAction(
 			action.send([msg, null]);
 			action.done();
 		} catch (err) {
-			if (WD2Manager.checkIfCritical(err)) {
+			if (isError(err) && WD2Manager.checkIfCritical(err)) {
 				reject(err);
 			} else {
 				msg.error = {
-					message: "Can't send keys on the the element : " + err.message,
+					message:
+						"Can't send keys on the the element: " +
+						(isError(err) ? err.message : String(err)),
 				};
 				node.status({ fill: "yellow", shape: "dot", text: step + "error" });
 				action.send([null, msg]);

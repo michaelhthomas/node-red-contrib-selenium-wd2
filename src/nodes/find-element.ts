@@ -1,10 +1,8 @@
 import { SeleniumAction, SeleniumNode, SeleniumNodeDef } from "./node";
 import { GenericSeleniumConstructor } from "./node-constructor";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeFindElementDef extends SeleniumNodeDef {}
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeFindElement extends SeleniumNode {}
 
 async function inputAction(
@@ -12,7 +10,7 @@ async function inputAction(
 	conf: NodeFindElementDef,
 	action: SeleniumAction
 ): Promise<void> {
-	return new Promise<void>((resolve, reject) => {
+	return new Promise<void>((resolve) => {
 		const msg = action.msg;
 		node.status({ fill: "green", shape: "dot", text: "success" });
 		if (msg.error) {

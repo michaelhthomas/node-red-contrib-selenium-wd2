@@ -1,13 +1,12 @@
+import { isError } from "../utils";
 import { WD2Manager } from "../wd2-manager";
 import { SeleniumAction, SeleniumNode, SeleniumNodeDef } from "./node";
 import { GenericSeleniumConstructor } from "./node-constructor";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeSetValueDef extends SeleniumNodeDef {
 	value: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeSetValue extends SeleniumNode {}
 
 async function inputAction(
@@ -30,13 +29,16 @@ async function inputAction(
 			action.send([msg, null]);
 			action.done();
 		} catch (err) {
-			if (WD2Manager.checkIfCritical(err)) {
+			if (isError(err) && WD2Manager.checkIfCritical(err)) {
 				reject(err);
 			} else {
+				const errorMessage =
+					"Can't set value on the the element : " +
+					(isError(err) ? err.message : String(err));
 				msg.error = {
-					message: "Can't set value on the the element : " + err.message,
+					message: errorMessage,
 				};
-				node.warn(msg.error.message);
+				node.warn(errorMessage);
 				node.status({
 					fill: "yellow",
 					shape: "dot",

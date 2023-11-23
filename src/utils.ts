@@ -57,3 +57,7 @@ export async function portCheck(host: string, port: number): Promise<boolean> {
 export function isError(x: unknown): x is Error {
 	return x != null && typeof x === "object" && x instanceof Error;
 }
+
+export function toError(x: unknown): Error {
+	return isError(x) ? x : new Error(String(x));
+}

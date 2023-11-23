@@ -1,10 +1,10 @@
+import { NodeMessageInFlow } from "node-red";
 import { WD2Manager } from "../wd2-manager";
-import { SeleniumMsg, SeleniumNode, SeleniumNodeDef } from "./node";
+import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
+import { toError } from "../utils";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeCloseWebDef extends SeleniumNodeDef {}
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeCloseWeb extends SeleniumNode {}
 
 export function NodeCloseWebConstructor(
@@ -14,9 +14,8 @@ export function NodeCloseWebConstructor(
 	WD2Manager.RED.nodes.createNode(this, conf);
 	this.status({});
 
-	this.on("input", async (message: any, send, done) => {
-		// Cheat to allow correct typing in typescript
-		const msg: SeleniumMsg = message;
+	this.on("input", (msg: NodeMessageInFlow, send, done) => {
+		assertIsSeleniumMessage(msg);
 
 		if (null === msg.driver) {
 			const error = new Error(
@@ -46,7 +45,7 @@ export function NodeCloseWebConstructor(
 					msg.driver = null;
 					msg.error = e;
 					this.status({ fill: "red", shape: "dot", text: "critical error" });
-					done(e);
+					done(toError(e));
 				}
 			}, waitFor);
 		}

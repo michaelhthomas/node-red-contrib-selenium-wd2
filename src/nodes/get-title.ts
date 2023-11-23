@@ -1,13 +1,13 @@
 import { until } from "selenium-webdriver";
 import { WD2Manager } from "../wd2-manager";
-import { SeleniumMsg, SeleniumNode, SeleniumNodeDef } from "./node";
+import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
+import { NodeMessageInFlow } from "node-red";
+import { isError, toError } from "../utils";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeGetTitleDef extends SeleniumNodeDef {
 	expected: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeGetTitle extends SeleniumNode {}
 
 export function NodeGetTitleConstructor(
@@ -17,16 +17,15 @@ export function NodeGetTitleConstructor(
 	WD2Manager.RED.nodes.createNode(this, conf);
 	this.status({});
 
-	this.on("input", async (message: any, send, done) => {
-		// Cheat to allow correct typing in typescript
-		const msg: SeleniumMsg = message;
-		const node = this;
-		node.status({});
+	this.on("input", (msg: NodeMessageInFlow, send, done) => {
+		assertIsSeleniumMessage(msg);
+
+		this.status({});
 		if (msg.driver == null) {
 			const error = new Error(
 				"Open URL must be call before any other action. For node : " + conf.name
 			);
-			node.status({ fill: "red", shape: "ring", text: "error" });
+			this.status({ fill: "red", shape: "ring", text: "error" });
 			done(error);
 		} else {
 			const expected = msg.expected ?? conf.expected;
@@ -37,11 +36,11 @@ export function NodeGetTitleConstructor(
 					try {
 						await msg.driver.wait(until.titleIs(expected), timeout);
 						send([msg, null]);
-						node.status({ fill: "green", shape: "dot", text: "success" });
+						this.status({ fill: "green", shape: "dot", text: "success" });
 						done();
 					} catch (e) {
-						if (WD2Manager.checkIfCritical(e)) {
-							node.status({
+						if (isError(e) && WD2Manager.checkIfCritical(e)) {
+							this.status({
 								fill: "red",
 								shape: "dot",
 								text: "critical error",
@@ -59,9 +58,9 @@ export function NodeGetTitleConstructor(
 								expected,
 								found: msg.webTitle,
 							};
-							node.warn(error.message);
+							this.warn(error.message);
 							msg.error = error;
-							node.status({
+							this.status({
 								fill: "yellow",
 								shape: "dot",
 								text: "wrong title",
@@ -73,18 +72,18 @@ export function NodeGetTitleConstructor(
 				} else {
 					try {
 						msg.payload = await msg.driver.getTitle();
-						node.status({ fill: "green", shape: "dot", text: "success" });
+						this.status({ fill: "green", shape: "dot", text: "success" });
 						if (msg.error) {
 							delete msg.error;
 						}
 						send([msg, null]);
 						done();
 					} catch (e) {
-						node.status({ fill: "red", shape: "dot", text: "error" });
-						node.error(
+						this.status({ fill: "red", shape: "dot", text: "error" });
+						this.error(
 							"Can't get title of the browser window. Check msg.error for more information"
 						);
-						done(e);
+						done(toError(e));
 					}
 				}
 			}, waitFor);

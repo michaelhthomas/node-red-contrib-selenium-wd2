@@ -1,19 +1,19 @@
+import { NodeMessageInFlow } from "node-red";
 import { WD2Manager } from "../wd2-manager";
-import { SeleniumMsg, SeleniumNode, SeleniumNodeDef } from "./node";
+import { SeleniumNode, SeleniumNodeDef, assertIsSeleniumMessage } from "./node";
+import { toError } from "../utils";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeOpenWebDef extends SeleniumNodeDef {
 	serverURL: string;
 	name: string;
 	browser: string;
 	webURL: string;
 	width: number;
-	heigth: number;
+	height: number;
 	maximized: boolean;
 	headless: boolean;
 }
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeOpenWeb extends SeleniumNode {}
 
 export function NodeOpenWebConstructor(
@@ -29,14 +29,14 @@ export function NodeOpenWebConstructor(
 		WD2Manager.setServerConfig(conf.serverURL)
 			.then((result) => {
 				if (result) {
-					this.log(conf.serverURL + " is reacheable by Node-red");
+					this.log(conf.serverURL + " is reachable by Node-RED");
 					this.status({
 						fill: "green",
 						shape: "ring",
 						text: conf.serverURL + ": reachable",
 					});
 				} else {
-					this.log(conf.serverURL + " is not reachable by Node-red");
+					this.log(conf.serverURL + " is not reachable by Node-RED");
 					this.status({
 						fill: "red",
 						shape: "ring",
@@ -48,10 +48,9 @@ export function NodeOpenWebConstructor(
 				this.log(error);
 			});
 	}
-	this.on("input", async (message: any, send, done) => {
-		// Cheat to allow correct typing in typescript
-		const msg: SeleniumMsg = message;
-		const node = this;
+	this.on("input", async (msg: NodeMessageInFlow, send, done) => {
+		assertIsSeleniumMessage(msg);
+
 		let driverError = false;
 		msg.driver = WD2Manager.getDriver(conf);
 		this.status({ fill: "blue", shape: "ring", text: "opening browser" });
@@ -59,11 +58,11 @@ export function NodeOpenWebConstructor(
 			await msg.driver.get(conf.webURL);
 		} catch (e) {
 			msg.driver = null;
-			node.error("Can't open an instance of " + conf.browser);
-			node.status({ fill: "red", shape: "ring", text: "launch error" });
+			this.error("Can't open an instance of " + conf.browser);
+			this.status({ fill: "red", shape: "ring", text: "launch error" });
 			driverError = true;
 			msg.driver = null;
-			done(e);
+			done(toError(e));
 		}
 		try {
 			if (msg.driver) {
@@ -73,17 +72,17 @@ export function NodeOpenWebConstructor(
 							await msg.driver
 								.manage()
 								.window()
-								.setSize(conf.width, conf.heigth);
+								.setSize(conf.width, conf.height);
 						else await msg.driver.manage().window().maximize();
 				send(msg);
 				this.status({ fill: "green", shape: "dot", text: "success" });
 				done();
 			}
 		} catch (e) {
-			node.error("Can't resize the instance of " + conf.browser);
-			node.status({ fill: "red", shape: "ring", text: "resize error" });
+			this.error("Can't resize the instance of " + conf.browser);
+			this.status({ fill: "red", shape: "ring", text: "resize error" });
 			driverError = true;
-			done(e);
+			done(toError(e));
 		}
 	});
 }

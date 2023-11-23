@@ -1,14 +1,15 @@
-import { Node } from "node-red";
+import { Node, NodeMessageInFlow } from "node-red";
 import { WD2Manager } from "../wd2-manager";
 import {
 	SeleniumAction,
-	SeleniumMsg,
 	SeleniumNodeDef,
+	assertIsSeleniumMessage,
 	waitForElement,
 } from "./node";
+import { isError, toError } from "../utils";
 
 export function GenericSeleniumConstructor<
-	TNode extends Node<any>,
+	TNode extends Node<unknown>,
 	TNodeDef extends SeleniumNodeDef
 >(
 	inputPreCondAction: (
@@ -25,46 +26,46 @@ export function GenericSeleniumConstructor<
 ) {
 	return function (this: TNode, conf: TNodeDef): void {
 		WD2Manager.RED.nodes.createNode(this, conf);
-		const node = this;
-		node.status({});
-		this.on("input", async (message: any, send, done) => {
-			// Cheat to allow correct typing in typescript
-			const msg: SeleniumMsg = message;
+
+		this.status({});
+		this.on("input", async (msg: NodeMessageInFlow, send, done) => {
+			assertIsSeleniumMessage(msg);
+
 			const action: SeleniumAction = { msg, send, done };
-			node.status({});
+			this.status({});
 			try {
 				if (
 					!inputPreCondAction ||
-					(await inputPreCondAction(node, conf, action))
+					(await inputPreCondAction(this, conf, action))
 				) {
 					if (msg.driver == null) {
 						const error = new Error(
 							"Open URL must be call before any other action. For node : " +
 								conf.name
 						);
-						node.status({ fill: "red", shape: "ring", text: "error" });
+						this.status({ fill: "red", shape: "ring", text: "error" });
 						done(error);
 					} else {
 						// If InputPreCond return false, next steps will not be executed
 						waitForElement(conf, msg).subscribe({
-							next(val) {
+							next: (val) => {
 								if (typeof val === "string") {
-									node.status({ fill: "blue", shape: "dot", text: val });
+									this.status({ fill: "blue", shape: "dot", text: val });
 								} else {
 									msg.element = val;
 								}
 							},
-							error(err) {
-								if (WD2Manager.checkIfCritical(err)) {
-									node.status({
+							error: (err) => {
+								if (isError(err) && WD2Manager.checkIfCritical(err)) {
+									this.status({
 										fill: "red",
 										shape: "dot",
 										text: "critical error",
 									});
-									node.error(err.toString());
+									this.error(err.toString());
 									done(err);
 								} else {
-									node.status({
+									this.status({
 										fill: "yellow",
 										shape: "dot",
 										text: "location error",
@@ -74,29 +75,29 @@ export function GenericSeleniumConstructor<
 									done();
 								}
 							},
-							async complete() {
-								node.status({ fill: "blue", shape: "dot", text: "located" });
+							complete: async () => {
+								this.status({ fill: "blue", shape: "dot", text: "located" });
 								try {
-									await inputAction(node, conf, action);
+									await inputAction(this, conf, action);
 								} catch (e) {
-									node.status({
+									this.status({
 										fill: "red",
 										shape: "dot",
 										text: "critical error",
 									});
-									node.error(e.toString());
+									this.error(String(e));
 									delete msg.driver;
-									done(e);
+									done(toError(e));
 								}
 							},
 						});
 					}
 				}
 			} catch (e) {
-				node.status({ fill: "red", shape: "dot", text: "critical error" });
-				node.error(e.toString());
+				this.status({ fill: "red", shape: "dot", text: "critical error" });
+				this.error(String(e));
 				delete msg.driver;
-				done(e);
+				done(toError(e));
 			}
 		});
 		// Activity to do during Node Creation

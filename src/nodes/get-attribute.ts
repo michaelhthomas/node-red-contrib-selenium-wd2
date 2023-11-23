@@ -1,14 +1,13 @@
+import { isError } from "../utils";
 import { WD2Manager } from "../wd2-manager";
 import { SeleniumAction, SeleniumNode, SeleniumNodeDef } from "./node";
 import { GenericSeleniumConstructor } from "./node-constructor";
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeGetAttributeDef extends SeleniumNodeDef {
 	expected: string;
 	attribute: string;
 }
 
-// tslint:disable-next-line: no-empty-interface
 export interface NodeGetAttribute extends SeleniumNode {}
 
 async function inputAction(
@@ -31,7 +30,7 @@ async function inputAction(
 						") value is not aligned, expected : " +
 						expected +
 						", value : " +
-						msg.payload,
+						String(msg.payload),
 				};
 				node.status({ fill: "yellow", shape: "dot", text: step + "error" });
 				action.send([null, msg]);
@@ -45,13 +44,16 @@ async function inputAction(
 				action.done();
 			}
 		} catch (err) {
-			if (WD2Manager.checkIfCritical(err)) {
+			if (isError(err) && WD2Manager.checkIfCritical(err)) {
 				reject(err);
 			} else {
+				const errorMessage =
+					"Can't send keys on the the element: " +
+					(isError(err) ? err.message : String(err));
 				msg.error = {
-					message: "Can't send keys on the the element : " + err.message,
+					message: errorMessage,
 				};
-				node.warn(msg.error.message);
+				node.warn(errorMessage);
 				node.status({
 					fill: "yellow",
 					shape: "dot",
