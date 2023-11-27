@@ -32,9 +32,11 @@ jobs:
       - name: Install chromium
         run: sudo apt install chromium-chromedriver
 
-      # Runs a single command using the runners shell
       - name: Install npm dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       - name: Install node-red
         run: sudo npm install -g --unsafe-perm node-red
@@ -42,11 +44,9 @@ jobs:
       - name: Install package into node-red
         run: sudo npm install -g .
 
-      # Runs a single command using the runners shell
       - name: Run node-red
         run: node-red > node-red-log.txt 2>&1 &
 
-      # Runs a single command using the runners shell
       - name: Run chromedriver
         run: chromedriver --verbose > chromedriver-log.txt 2>&1 &
 
